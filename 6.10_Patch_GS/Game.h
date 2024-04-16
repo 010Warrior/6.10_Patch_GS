@@ -12,21 +12,20 @@ namespace GameMode
 		if (!GameModeAthena || !GameStateAthena)
 			return false;
 
-		static bool BSetup = false;
-		if (!BSetup)
+		static bool bHasSetupPlaylist = false;
+		if (!bHasSetupPlaylist)
 		{
-			BSetup = true;
+			bHasSetupPlaylist = true;
 			auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
-
 			if (!Playlist)
 			{
-				LOG_INFO("Playlist Wrong Retard!");
+				bHasSetupPlaylist = false;
+				LOG_INFO("[-] AGameMode::ReadyToStartMatch: Invalid Playlist");
+
+				return false;
 			}
-		   /*GameStateAthena->GamePhase = EAthenaGamePhase::Warmup;
-		   GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::Setup);*/
 
 			static bool bHasStartedListening = false;
-
 			if (!bHasStartedListening)
 			{
 				bHasStartedListening = true;
@@ -53,12 +52,17 @@ namespace GameMode
 				ServerReplicateActors = decltype(ServerReplicateActors)((*(void***)GetWorld()->NetDriver->ReplicationDriver)[0x56]);
 				LOG_INFO("[+] ServerReplicateActors: 0x{:x}", __int64(ServerReplicateActors) - __int64(GetModuleHandleW(0)));
 
-				GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
-				GameStateAthena->CurrentPlaylistInfo.BasePlaylist = Playlist;
-				GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
-				//	GameStateAthena->CurrentPlaylistInfo.MarkArrayDirt; // i need to add MarkArrayDirt WOwie!
-				GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
+			//	GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
+				//GameStateAthena->OnRep_CurrentPlaylistId();
+				//GameStateAthena->CurrentPlaylistInfo.BasePlaylist = Playlist;
+			//	GameStateAthena->OnRep_CurrentPlaylistInfo();
+				//GameStateAthena->CurrentPlaylistData = Playlist;
+			   //	GameStateAthena->OnRep_CurrentPlaylistData();
+		 		GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
+		 		GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
 				GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty();
+
+				GameModeAthena->bWorldIsReady = true;
 
 				GameStateAthena->OnRep_CurrentPlaylistInfo();
 				GameModeAthena->WarmupRequiredPlayerCount = 1;
@@ -69,6 +73,7 @@ namespace GameMode
 			return ReadyToStartMatch(GameMode);
 		}
 	}
+
 
 	bool (*SpawnDefaultPawnFor)(UObject* Object, void* Params);
 	bool SpawnDefaultPawnForHook(UObject* Object, void* Params)
@@ -85,9 +90,38 @@ namespace GameMode
 				return true;*/
 	}
 
+	bool HandleStartingNewPlayerHook(UObject* Object, void* Parms)
+	{
+		LOG_INFO("HandleStartingNewPlayerHook!");
+		auto NewPlayer = (AFortPlayerControllerAthena*)((AGameModeBase_HandleStartingNewPlayer_Params*)Parms)->NewPlayer;
+
+		if (!NewPlayer)
+			return false;
+
+		FTransform Transform{};
+	 //   Transform.Translation = GetSpawn()->K2_GetActorLocation();
+		Transform.Scale3D = FVector(1, 1, 1);
+
+		LOG_INFO("Spawning Pawn!");
+		APawn* NewPawn = (APawn*)SpawnActor<APlayerPawn_Athena_C>(APlayerPawn_Athena_C::StaticClass(), Transform.Translation);
+		NewPlayer->Possess(NewPawn);
+
+		AFortPlayerStateAthena* PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState;
+
+		PlayerState->bHasFinishedLoading = true;
+		PlayerState->bHasStartedPlaying = true;
+		NewPlayer->bHasClientFinishedLoading = true;
+		NewPlayer->bHasServerFinishedLoading = true;
+
+		return false;
+	}
+
+
 	void Init()
 	{
 		Hook(__int64(GetModuleHandleW(0)) + 0x25D9500, ReadyToStartMatchHook, (void**)&ReadyToStartMatch);
 		Hook(__int64(GetModuleHandleW(0)) + 0xC2FD50, SpawnDefaultPawnForHook, (void**)&SpawnDefaultPawnFor);
+		Sleep(10000);
+		Hook(__int64(GetModuleHandleW(0)) + 0x239A4F0, HandleStartingNewPlayerHook);
 	}
 }

@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "LOGINFO.h"
 #include "Actor.h"
+#include "LOGINFO.h"
 
 namespace Misc
 {
@@ -19,6 +20,7 @@ namespace Misc
         LOG_INFO("[+] KickPlayer Called!");
         return 1;
     }
+
 
     void Init()
     {

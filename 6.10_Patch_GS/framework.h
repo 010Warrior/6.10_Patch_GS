@@ -160,7 +160,7 @@ T* SpawnActor(UClass* ActorClass = T::StaticClass(), FVector Location = {}, FRot
 	Params.Owner = Owner;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	static void* (*SpawnActorOG)(void*, void*, void*, void*, void*) = decltype(SpawnActorOG)(__int64(GetModuleHandleW(0)) + 0x38065C8);
+	static void* (*SpawnActorOG)(void*, void*, void*, void*, void*) = decltype(SpawnActorOG)(__int64(GetModuleHandleW(0)) + 0x239A4F0); // might be wrong or good idek
 	return (T*)SpawnActorOG(GetWorld(), ActorClass, &Location, &Rotation, &Params);
 }
 
