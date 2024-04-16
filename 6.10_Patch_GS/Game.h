@@ -1,7 +1,5 @@
 #pragma once
 #include "framework.h"
-using namespace SDK;
-using namespace Params;
 
 namespace GameMode
 {
@@ -14,20 +12,21 @@ namespace GameMode
 		if (!GameModeAthena || !GameStateAthena)
 			return false;
 
-		static bool bHasSetupPlaylist = false;
-		if (!bHasSetupPlaylist)
+		static bool BSetup = false;
+		if (!BSetup)
 		{
-			bHasSetupPlaylist = true;
+			BSetup = true;
 			auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
+
 			if (!Playlist)
 			{
-				bHasSetupPlaylist = false;
-				LOG_INFO("[-] AGameMode::ReadyToStartMatch: Invalid Playlist");
-
-				return false;
+				LOG_INFO("Playlist Wrong Retard!");
 			}
+		   /*GameStateAthena->GamePhase = EAthenaGamePhase::Warmup;
+		   GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::Setup);*/
 
 			static bool bHasStartedListening = false;
+
 			if (!bHasStartedListening)
 			{
 				bHasStartedListening = true;
@@ -54,6 +53,13 @@ namespace GameMode
 				ServerReplicateActors = decltype(ServerReplicateActors)((*(void***)GetWorld()->NetDriver->ReplicationDriver)[0x56]);
 				LOG_INFO("[+] ServerReplicateActors: 0x{:x}", __int64(ServerReplicateActors) - __int64(GetModuleHandleW(0)));
 
+				GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
+				GameStateAthena->CurrentPlaylistInfo.BasePlaylist = Playlist;
+				GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
+				//	GameStateAthena->CurrentPlaylistInfo.MarkArrayDirt; // i need to add MarkArrayDirt WOwie!
+				GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
+				GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty();
+
 				GameStateAthena->OnRep_CurrentPlaylistInfo();
 				GameModeAthena->WarmupRequiredPlayerCount = 1;
 
@@ -64,32 +70,24 @@ namespace GameMode
 		}
 	}
 
-	namespace SpawnDefaultPawnFor
+	bool (*SpawnDefaultPawnFor)(UObject* Object, void* Params);
+	bool SpawnDefaultPawnForHook(UObject* Object, void* Params)
 	{
-		bool SpawnDefaultPawnForHook(UObject* Object, void* Params)
-		{
-			LOG_INFO("[+] SpawnDefaultPawnFor Called!");
-			auto GameMode = (AFortGameModeAthena*)Object;
-			AGameModeBase_SpawnDefaultPawnFor_Params* Parameters = (AGameModeBase_SpawnDefaultPawnFor_Params*)Params;
-			AFortPlayerControllerAthena* PC = (AFortPlayerControllerAthena*)Parameters->NewPlayer;
+		LOG_INFO("[+] SpawnDefaultPawnFor Called!");
+		auto GameMode = (AFortGameModeAthena*)Object;
+		AGameModeBase_SpawnDefaultPawnFor_Params* Parameters = (AGameModeBase_SpawnDefaultPawnFor_Params*)Params;
+		AFortPlayerControllerAthena* PC = (AFortPlayerControllerAthena*)Parameters->NewPlayer;
 
-			if (!PC || !Parameters->StartSpot)
-				return false;
-			LOG_INFO("StartSpot");
+		if (!PC || !Parameters->StartSpot)
+			return false;
 
-			/*	if (!PC || !Parameters->NewPlayer)
-					return true;*/
-		}
-
+		/*	if (!PC || !Parameters->NewPlayer)
+				return true;*/
+	}
 
 	void Init()
 	{
-		__int64 Base = __int64(GetModuleHandleW(0));
-		Hook(Base + 0x4435D68, ReadyToStartMatchHook, (void**)&ReadyToStartMatch);
-
-		Sleep(5000);
-
-		AddHook("Engine.GameModeBase.SpawnDefaultPawnFor", SpawnDefaultPawnForHook);
+		Hook(__int64(GetModuleHandleW(0)) + 0x25D9500, ReadyToStartMatchHook, (void**)&ReadyToStartMatch);
+		Hook(__int64(GetModuleHandleW(0)) + 0xC2FD50, SpawnDefaultPawnForHook, (void**)&SpawnDefaultPawnFor);
 	}
-
 }

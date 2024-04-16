@@ -1,11 +1,12 @@
 #pragma once
-#include "ue.h"
-#include "framework.h"
 #include <Windows.h>
 #include <functional>
 #include <vector>
 #include <format>
 #include <iostream>
+#include "ue.h"
+#include "framework.h"
+#include "Game.h"
 
 DWORD Main(LPVOID)
 {
@@ -30,14 +31,23 @@ DWORD Main(LPVOID)
 
     CreateNetDriver = decltype(CreateNetDriver)(Memcury::Scanner::FindPattern("48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B").Get()); //ue421
     LOG_INFO("[+] Found NetDriver From: 48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B");
-   // InitHost = decltype(InitHost)(Memcury::Scanner::FindPattern("48 8B C4 48 81 EC ? ? ? ? 48 89 58 18 4C 8D 05 ? ? ? ?").Get()); //ue421A
+
+    // InitHost = decltype(InitHost)(Memcury::Scanner::FindPattern("48 8B C4 48 81 EC ? ? ? ? 48 89 58 18 4C 8D 05 ? ? ? ?").Get()); //ue421A
+
     LOG_INFO("[+] Hooks");
     Misc::Init();
+
+    Actor::Init();
+    LOG_INFO("[+] ActorGetNetMode: 0x239A4F0")
+
+
     LOG_INFO("[+] KickPlayer: 0x25C98B0");
     NetDriver::Init();
+
     LOG_INFO("[+] TickFlush: 0x2709580");
+
     GameMode::Init();
-    LOG_INFO("[+] ReadyToStartMatch: 0x4435D68");
+    LOG_INFO("[+] ReadyToStartMatch: 0x4435D68 but we using ufunction ig");
 
     return 1;
 }

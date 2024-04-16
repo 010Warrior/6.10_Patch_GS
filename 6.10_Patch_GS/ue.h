@@ -9,6 +9,7 @@
 #include "NetDriverong.h"
 #include "Game.h"
 #include "LOGINFO.h"
+#include "Actor.h"
 
 namespace Misc
 {
