@@ -21,7 +21,7 @@ DWORD Main(LPVOID)
     InitGObjects();
 
     LOG_INFO("Welcome to WarriorGS");
-    LOG_INFO("Currently In Beta On Version: 6.10 \n Unreal Engine: Ver:UE4.21 ");
+    LOG_INFO("Currently In Beta On Version: 6.10  Unreal Engine: Ver:UE4.21 ");
 
     Sleep(5000);
 
@@ -47,7 +47,7 @@ DWORD Main(LPVOID)
     LOG_INFO("[+] TickFlush: 0x2709580");
 
     GameMode::Init();
-    LOG_INFO("[+] ReadyToStartMatch: 0x4435D68 but we using ufunction ig");
+    LOG_INFO("[+] ReadyToStartMatch: 0x4435D68 \n [+] SpawnDefaultPawnFor:0xC2FD50 ");
 
     return 1;
 }
