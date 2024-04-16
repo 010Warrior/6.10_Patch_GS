@@ -1,15 +1,11 @@
 #pragma once
 #include "ue.h"
+#include "framework.h"
 #include <Windows.h>
 #include <functional>
 #include <vector>
 #include <format>
 #include <iostream>
-#include "framework.h"
-#include "SDK.hpp"
-#include "Game.h"
- 
-using namespace SDK;
 
 DWORD Main(LPVOID)
 {
@@ -24,7 +20,7 @@ DWORD Main(LPVOID)
     InitGObjects();
 
     LOG_INFO("Welcome to WarriorGS");
-    LOG_INFO("Currently In Beta On Version: 6.10 \n Unreal Engine: Ver:UE4.21");
+    LOG_INFO("Currently In Beta On Version: 6.10 \n Unreal Engine: Ver:UE4.21 ");
 
     Sleep(5000);
 
@@ -33,7 +29,7 @@ DWORD Main(LPVOID)
     //GetEngine()->GameInstance->LocalPlayers.ResetNum(0);
 
     CreateNetDriver = decltype(CreateNetDriver)(Memcury::Scanner::FindPattern("48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B").Get()); //ue421
-    LOG_INFO("[+] Found InitHost From: 48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B");
+    LOG_INFO("[+] Found NetDriver From: 48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B");
    // InitHost = decltype(InitHost)(Memcury::Scanner::FindPattern("48 8B C4 48 81 EC ? ? ? ? 48 89 58 18 4C 8D 05 ? ? ? ?").Get()); //ue421A
     LOG_INFO("[+] Hooks");
     Misc::Init();
@@ -42,7 +38,7 @@ DWORD Main(LPVOID)
     LOG_INFO("[+] TickFlush: 0x2709580");
     GameMode::Init();
     LOG_INFO("[+] ReadyToStartMatch: 0x4435D68");
-    
+
     return 1;
 }
 
@@ -66,4 +62,3 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     }
     return TRUE;
 }
-

@@ -11,6 +11,7 @@
 #pragma comment(lib, "MH/minhook.lib")
 
 using namespace SDK;
+using namespace Params;
 
 inline SDK::UNetDriver* (*CreateNetDriver)(void*, void*, SDK::FName);
 //static UNetDriver* (*CreateNetDriver)(UEngine* a1, UWorld* a2, FName a3) = decltype(CreateNetDriver)(__int64(GetModuleHandleW(0)) + 0x455C570); 
