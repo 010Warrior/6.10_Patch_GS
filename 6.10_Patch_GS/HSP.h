@@ -1,8 +1,9 @@
 #pragma once
 #include "ue.h"
-namespace HandeNewPlayer
+
+/*namespace HandeNewPlayer
 {
-	static void (*HandleStartingNewPlayerA)(AFortGameModeAthena*, AFortPlayerControllerAthena*);
+	static void (*HandleStartingNewPlayerA)(AFortGameModeAthena*, AFortPlayerControllerAthena*); //offset wrong + its skunk jyzo said 
 	void HandleStartingNewPlayerHook(AFortGameModeAthena* GM, AFortPlayerControllerAthena* NewPlayer)
 	{
 		LOG_INFO("HandleStartingNewPlayerHook")
@@ -23,6 +24,6 @@ namespace HandeNewPlayer
 
 	void init()
 	{
-		Hook(__int64(GetModuleHandleW(0)) + 0x2A466C0, HandeNewPlayer::HandleStartingNewPlayerHook, (void**)&HandeNewPlayer::HandleStartingNewPlayerA); //test wowie
+		Hook(__int64(GetModuleHandleW(0)) + 0x2A466C0, HandeNewPlayer::HandleStartingNewPlayerHook, (void**)&HandeNewPlayer::HandleStartingNewPlayerA); //wrong offset thats why it aint working lol
 	}
-}
+}*/

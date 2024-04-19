@@ -13,6 +13,6 @@ namespace Actor
 	void Init()
 	{
 		LOG_INFO("[+] ActorGetNetMode: Caled Wowie")
-		Hook(__int64(GetModuleHandleW(0)) + 0x239A4F0, GetNetModeHook);
+		Hook(__int64(GetModuleHandleW(0)) + 0xAE774B, GetNetModeHook); //prob wrong thats why it crashes :skull:
 	}
 }

@@ -15,44 +15,36 @@ DWORD Main(LPVOID)
     freopen_s(&streamPtr, "CONOUT$", "w", stdout);
 
     SetConsoleTitleA("6_1-SDK");
+    AllocConsole();
     MH_Initialize();
     SetupLogger();
 
-    LOG_INFO("Welcome to WarriorGS");
-    LOG_INFO("[+] Currently In Beta On Version: 6.10 Unreal Engine: Ver:UE4.21 ");
+    LOG_INFO("[+] Setting up 6.1 gs frfr: will take 5 sec to load to make sure client is ready to HOST! ");
 
     Sleep(5000);
-
-    LOG_INFO("[+] Entering Athena_Terrain \n");
+    LOG_INFO("[+] Entering Athena_Terrain");
     GetDefaultObject<UKismetSystemLibrary>()->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
     GetEngine()->GameInstance->LocalPlayers.Remove(0);
 
     CreateNetDriver = decltype(CreateNetDriver)(Memcury::Scanner::FindPattern("48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B").Get()); //ue421
     LOG_INFO("[+] Found NetDriver From: 48 89 5C 24 ? 57 48 83 EC 30 48 8B 81 ? ? ? ? 49 8B D8 4C 63 81 ? ? ? ? 4C 8B D2 48 8B F9 4E 8D 0C C0 49 3B C1 74 1B");
 
-    // InitHost = decltype(InitHost)(Memcury::Scanner::FindPattern("48 8B C4 48 81 EC ? ? ? ? 48 89 58 18 4C 8D 05 ? ? ? ?").Get()); //ue421A
+    // InitHost = decltype(InitHost)(Memcury::Scanner::FindPattern("48 8B C4 48 81 EC ? ? ? ? 48 89 58 18 4C 8D 05 ? ? ? ?").Get()); //ue421A iam not using beacons
 
     LOG_INFO("[+] Hooks");
     Misc::Init();
-
    // Actor::Init();
-    //LOG_INFO("[+] ActorGetNetMode: 0x239A4F0")
+    LOG_INFO("[+] ActorGetNetMode: 0x239A4F0") //idk if works!
 
-
-    LOG_INFO("[+] KickPlayer: 0x25C98B0");
     NetDriver::Init();
-
+    LOG_INFO("[+] KickPlayer: 0x25C98B0");
     LOG_INFO("[+] TickFlush: 0x2709580");
 
     GameMode::Init();
     GameModeBase::Init();
-    HandeNewPlayer::init();
+ //   HandeNewPlayer::init();
 
     LOG_INFO("[+] Finished hooks");
-
-    
-
-
 
     return 1;
 }

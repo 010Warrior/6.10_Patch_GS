@@ -2,17 +2,17 @@
 
 namespace GameModeBase
 {
-	APawn* SpawnDefaultPawnForHook(AGameModeBase* GameModeBase, AController* Controller, AActor* StartSpot, AFortPlayerControllerAthena* NewPlayer) //from volcano i will make my own one soon this was just to make sure the offset was okay!
+	APawn* SpawnDefaultPawnForHook(AGameModeBase* GameModeBase, AController* Controller, AActor* StartSpot, AFortPlayerControllerAthena* NewPlayer) 
 	{
 		if (!StartSpot || !Controller)
 			return 0;
 
 		LOG_INFO("[+] SpawnDefualtPawnFor called");
 
-		FTransform SpawnTransform = StartSpot->GetTransform();
-		return GameModeBase->SpawnDefaultPawnAtTransform(Controller, SpawnTransform);
+		FTransform SpawnTransform = StartSpot->GetTransform(); // i need to apply the skin shit finna be hard for first time ong
+		return GameModeBase->SpawnDefaultPawnAtTransform(Controller, SpawnTransform); //best way to do it fr
 
-		auto PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState;
+	/*	auto PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState;
 
 		auto FortPawn = UObject::FindObject("/Game/Athena/PlayerPawn_Athena.PlayerPawn_Athena_C");
 
@@ -23,7 +23,7 @@ namespace GameModeBase
 
 		LOG_INFO("HUHHHHHHHH???????");
 		Update((AFortPlayerController*)NewPlayer);
-		LOG_INFO("Workeddddddddddddd???????");
+		LOG_INFO("Workeddddddddddddd???????");*/
 	}
 
 	void Init()

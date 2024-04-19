@@ -20,21 +20,14 @@ namespace GameMode
 		{
 			bHasSetupPlaylist = true;
 
-			GameStateAthena->bGameModeWillSkipAircraft = true;
-			GameStateAthena->AircraftStartTime = 99999.0f;
-			GameStateAthena->WarmupCountdownEndTime = 99999.0f;
+		//	GameStateAthena->bGameModeWillSkipAircraft = true;
+		//	GameStateAthena->AircraftStartTime = 99999.0f;
+		//	GameStateAthena->WarmupCountdownEndTime = 99999.0f;
 
 			GameStateAthena->GamePhase = EAthenaGamePhase::Warmup;
-			GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::None);
+			GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::Setup);
 
 			auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
-			if (!Playlist)
-			{
-				bHasSetupPlaylist = false;
-				LOG_INFO("[-] AGameMode::ReadyToStartMatch: Invalid Playlist");
-
-				return false;
-			}
 
 			GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
 			GameStateAthena->OnRep_CurrentPlaylistId();
@@ -42,7 +35,19 @@ namespace GameMode
 			GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
 			GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
 			GameStateAthena->OnRep_CurrentPlaylistInfo();
-			//	GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty.();
+			//GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty.(); //no markarraydirt implementation rn
+
+			auto LF_Athena_StreamingTest13 = UObject::FindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Athena_StreamingTest13");
+			if (LF_Athena_StreamingTest13)
+			{
+				LOG_INFO("[+] Called LF_Athena_StreamingTest13");
+
+				LF_Athena_StreamingTest13->DynamicFoundationType = EDynamicFoundationType::Static;
+				LF_Athena_StreamingTest13->bServerStreamedInLevel = true;
+				LF_Athena_StreamingTest13->OnRep_ServerStreamedInLevel();
+			}
+	
+		   	GameMode->DefaultPawnClass = UObject::FindObject<UClass>("PlayerPawn_Athena.PlayerPawn_Athena_C");
 
 			static bool bHasStartedListening = false;
 			if (!bHasStartedListening)
@@ -78,6 +83,8 @@ namespace GameMode
 
 				GameModeAthena->bWorldIsReady = true;
 
+			   	LOG_INFO("Players Can Join!");
+				
 			}
 
 			return ReadyToStartMatch(GameMode);
