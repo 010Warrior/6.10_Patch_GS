@@ -1,9 +1,6 @@
-Just a fun project 
+joining no pawn 
+no skin no pickaxe
 
-Currently (had joining but fucked it)
-*MarkArrayDirty
-*SpawnDefaultPawnFor
-*ReadyToStartMatch Correct Offset fr
-*ActorGetNetMode (Might Be a crash issue idek)
-*CreateNetDriver
-* fixed sdk yay fr fr
+startaircraft to walk around the map
+
+glider (MCP) i think its automatic lol
