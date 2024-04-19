@@ -154,28 +154,3 @@ UGameplayStatics* GetStatics()
 	return GetDefaultObject<UGameplayStatics>();
 }
 
-template<typename T>
-T* SpawnActor(UClass* ActorClass = T::StaticClass(), FVector Location = {}, FRotator Rotation = {}, AActor* Owner = nullptr)
-{
-	struct FActorSpawnParameters
-	{
-		FName Name;
-		AActor* Template;
-		AActor* Owner;
-		APawn* Instigator;
-		ULevel* OverrideLevel;
-		ESpawnActorCollisionHandlingMethod SpawnCollisionHandlingOverride;
-		uint8 bRemoteOwned : 1;
-		uint8 bNoFail : 1;
-		uint8 bDeferConstruction : 1;
-		uint8 bAllowDuringConstructionScript : 1;
-		int32 ObjectFlags;
-	};
-
-	FActorSpawnParameters Params{};
-	Params.Owner = Owner;
-	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	static void* (*SpawnActorOG)(void*, void*, void*, void*, void*) = decltype(SpawnActorOG)(__int64(GetModuleHandleW(0)) + 0x38080A0);
-	return (T*)SpawnActorOG(GetWorld(), ActorClass, &Location, &Rotation, &Params);
-}
