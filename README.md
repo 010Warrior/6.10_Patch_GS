@@ -1,6 +1,8 @@
-joining no pawn 
-no skin no pickaxe
+# Current Features!
 
-startaircraft to walk around the map
+*joining no pawn 
+*no skin no pickaxe
 
-glider (MCP) i think its automatic lol
+*startaircraft to walk around the map
+
+*glider (MCP) i think its automatic lol
