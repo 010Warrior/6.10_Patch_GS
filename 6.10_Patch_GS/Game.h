@@ -1,5 +1,7 @@
 #pragma once
 #include "framework.h"
+#include "SDK/Engine_parameters.hpp"
+#include "Inventory.h"
 
 namespace GameMode
 {
@@ -8,6 +10,7 @@ namespace GameMode
 	{
 		auto GameModeAthena = Cast<AFortGameModeAthena>(GameMode);
 		auto GameStateAthena = Cast<AFortGameStateAthena>(GameMode->GameState);
+		//auto PlayerState = Cast<AFortPlayerStateAthena>(PlayerController->)
 
 		if (!GameModeAthena || !GameStateAthena)
 			return false;
@@ -16,6 +19,14 @@ namespace GameMode
 		if (!bHasSetupPlaylist)
 		{
 			bHasSetupPlaylist = true;
+
+			GameStateAthena->bGameModeWillSkipAircraft = true;
+			GameStateAthena->AircraftStartTime = 99999.0f;
+			GameStateAthena->WarmupCountdownEndTime = 99999.0f;
+
+			GameStateAthena->GamePhase = EAthenaGamePhase::Warmup;
+			GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::None);
+
 			auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
 			if (!Playlist)
 			{
@@ -24,6 +35,14 @@ namespace GameMode
 
 				return false;
 			}
+
+			GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
+			GameStateAthena->OnRep_CurrentPlaylistId();
+			GameStateAthena->CurrentPlaylistInfo.BasePlaylist = Playlist;
+			GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
+			GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
+			GameStateAthena->OnRep_CurrentPlaylistInfo();
+			//	GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty.();
 
 			static bool bHasStartedListening = false;
 			if (!bHasStartedListening)
@@ -52,22 +71,13 @@ namespace GameMode
 				ServerReplicateActors = decltype(ServerReplicateActors)((*(void***)GetWorld()->NetDriver->ReplicationDriver)[0x56]);
 				LOG_INFO("[+] ServerReplicateActors: 0x{:x}", __int64(ServerReplicateActors) - __int64(GetModuleHandleW(0)));
 
-			//	GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
-				//GameStateAthena->OnRep_CurrentPlaylistId();
-				//GameStateAthena->CurrentPlaylistInfo.BasePlaylist = Playlist;
-			//	GameStateAthena->OnRep_CurrentPlaylistInfo();
-				//GameStateAthena->CurrentPlaylistData = Playlist;
-			   //	GameStateAthena->OnRep_CurrentPlaylistData();
-		 		GameStateAthena->CurrentPlaylistInfo.PlaylistReplicationKey++;
-		 		GameStateAthena->CurrentPlaylistInfo.OverridePlaylist = Playlist;
-				GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty();
-
 				GameModeAthena->bWorldIsReady = true;
 
 				GameStateAthena->OnRep_CurrentPlaylistInfo();
 				GameModeAthena->WarmupRequiredPlayerCount = 1;
 
 				GameModeAthena->bWorldIsReady = true;
+
 			}
 
 			return ReadyToStartMatch(GameMode);
@@ -75,53 +85,12 @@ namespace GameMode
 	}
 
 
-	bool (*SpawnDefaultPawnFor)(UObject* Object, void* Params);
-	bool SpawnDefaultPawnForHook(UObject* Object, void* Params)
-	{
-		LOG_INFO("[+] SpawnDefaultPawnFor Called!");
-		auto GameMode = (AFortGameModeAthena*)Object;
-		AGameModeBase_SpawnDefaultPawnFor_Params* Parameters = (AGameModeBase_SpawnDefaultPawnFor_Params*)Params;
-		AFortPlayerControllerAthena* PC = (AFortPlayerControllerAthena*)Parameters->NewPlayer;
-
-		if (!PC || !Parameters->StartSpot)
-			return false;
-
-		/*	if (!PC || !Parameters->NewPlayer)
-				return true;*/
+		
+			void Init()
+			{
+				Hook(__int64(GetModuleHandleW(0)) + 0x25D9500, ReadyToStartMatchHook, (void**)&ReadyToStartMatch);
+			//7FF6E0558A46-7FF6E0310000=0x248A46
+				//7FF6E39F2250-7FF6E0310000=0x36E2250
+		}
 	}
 
-	bool HandleStartingNewPlayerHook(UObject* Object, void* Parms)
-	{
-		LOG_INFO("HandleStartingNewPlayerHook!");
-		auto NewPlayer = (AFortPlayerControllerAthena*)((AGameModeBase_HandleStartingNewPlayer_Params*)Parms)->NewPlayer;
-
-		if (!NewPlayer)
-			return false;
-
-		FTransform Transform{};
-	 //   Transform.Translation = GetSpawn()->K2_GetActorLocation();
-		Transform.Scale3D = FVector(1, 1, 1);
-
-		LOG_INFO("Spawning Pawn!");
-		APawn* NewPawn = (APawn*)SpawnActor<APlayerPawn_Athena_C>(APlayerPawn_Athena_C::StaticClass(), Transform.Translation);
-		NewPlayer->Possess(NewPawn);
-
-		AFortPlayerStateAthena* PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState;
-
-		PlayerState->bHasFinishedLoading = true;
-		PlayerState->bHasStartedPlaying = true;
-		NewPlayer->bHasClientFinishedLoading = true;
-		NewPlayer->bHasServerFinishedLoading = true;
-
-		return false;
-	}
-
-
-	void Init()
-	{
-		Hook(__int64(GetModuleHandleW(0)) + 0x25D9500, ReadyToStartMatchHook, (void**)&ReadyToStartMatch);
-		Hook(__int64(GetModuleHandleW(0)) + 0xC2FD50, SpawnDefaultPawnForHook, (void**)&SpawnDefaultPawnFor);
-		Sleep(10000);
-		Hook(__int64(GetModuleHandleW(0)) + 0x239A4F0, HandleStartingNewPlayerHook);
-	}
-}

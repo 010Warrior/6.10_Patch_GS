@@ -11,6 +11,9 @@
 #include "LOGINFO.h"
 #include "Actor.h"
 #include "LOGINFO.h"
+#include "AGameModeBase.h"
+#include "Inventory.h"
+#include "HSP.h"
 
 namespace Misc
 {
@@ -21,10 +24,17 @@ namespace Misc
         return 1;
     }
 
+    bool ValidationFailure()
+    {
+        LOG_INFO("[+] Val failure called");
+        return false;
+    }
+
 
     void Init()
     {
         __int64 Base = __int64(GetModuleHandleW(0));
         Hook(Base + 0x25C98B0, KickPlayer);
+        Hook(Base + 0x55F0D7, ValidationFailure);
     }
 }
