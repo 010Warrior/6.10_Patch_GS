@@ -38,7 +38,7 @@ namespace GameMode
 			//GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty.(); //no markarraydirt implementation rn
 
 
-			auto LF_Athena_StreamingTest13 = UObject::FindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Athena_StreamingTest13");
+			auto LF_Athena_StreamingTest13 = StaticFindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Athena_StreamingTest13");
 		  	if (LF_Athena_StreamingTest13)
 			{
 				LOG_INFO("[+] Succsesfully Loaded: LF_Athena_StreamingTest13");
