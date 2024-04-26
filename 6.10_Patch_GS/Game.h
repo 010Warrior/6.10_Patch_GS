@@ -27,7 +27,7 @@ namespace GameMode
 			GameStateAthena->GamePhase = EAthenaGamePhase::Warmup;
 			GameStateAthena->OnRep_GamePhase(EAthenaGamePhase::Setup);
 
-			auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
+		   auto Playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
 
 			GameStateAthena->CurrentPlaylistId = Playlist->PlaylistId;
 			GameStateAthena->OnRep_CurrentPlaylistId();
@@ -37,17 +37,57 @@ namespace GameMode
 			GameStateAthena->OnRep_CurrentPlaylistInfo();
 			//GameStateAthena->CurrentPlaylistInfo.MarkArrayDirty.(); //no markarraydirt implementation rn
 
+
 			auto LF_Athena_StreamingTest13 = UObject::FindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Athena_StreamingTest13");
-			if (LF_Athena_StreamingTest13)
+		  	if (LF_Athena_StreamingTest13)
 			{
-				LOG_INFO("[+] Called LF_Athena_StreamingTest13");
+				LOG_INFO("[+] Succsesfully Loaded: LF_Athena_StreamingTest13");
 
 				LF_Athena_StreamingTest13->DynamicFoundationType = EDynamicFoundationType::Static;
 				LF_Athena_StreamingTest13->bServerStreamedInLevel = true;
 				LF_Athena_StreamingTest13->OnRep_ServerStreamedInLevel();
 			}
-	
-		   	GameMode->DefaultPawnClass = UObject::FindObject<UClass>("PlayerPawn_Athena.PlayerPawn_Athena_C");
+
+		   /* auto Athena_POI_LakeIsland = StaticFindObject<ABuildingFoundation>("/Game/Athena/Maps/POI/Athena_POI_LakeIsland");
+			if (Athena_POI_LakeIsland)
+			{
+				LOG_INFO("[+] Succsesfully Loaded: Athena_POI_LakeIsland");
+
+				Athena_POI_LakeIsland->DynamicFoundationType = EDynamicFoundationType::Static;
+				Athena_POI_LakeIsland->bServerStreamedInLevel = true;
+				Athena_POI_LakeIsland->OnRep_ServerStreamedInLevel();
+			}
+
+			auto Lake1= StaticFindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Lake1");
+			if (Lake1)
+			{
+				LOG_INFO("[+] Succsesfully Loaded: LF_Lake1");
+
+				Lake1->DynamicFoundationType = EDynamicFoundationType::Static;
+				Lake1->bServerStreamedInLevel = true;
+				Lake1->OnRep_ServerStreamedInLevel();
+			}
+
+			auto Lake2 = StaticFindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_Lake2");
+			if (Lake2)
+			{
+				LOG_INFO("[+] Succsesfully Loaded: LF_Lake2");
+
+				Lake2->DynamicFoundationType = EDynamicFoundationType::Static;
+				Lake2->bServerStreamedInLevel = true;
+				Lake2->OnRep_ServerStreamedInLevel();
+			}
+
+			auto LF_FloatingIsland = StaticFindObject<ABuildingFoundation>("/Game/Athena/Maps/Athena_POI_Foundations.Athena_POI_Foundations.PersistentLevel.LF_FloatingIsland");
+			if (LF_FloatingIsland)
+			{
+				LOG_INFO("[+] Succsesfully Loaded: LF_FloatingIsland!");
+
+				LF_FloatingIsland->DynamicFoundationType = EDynamicFoundationType::Static;
+				LF_FloatingIsland->bServerStreamedInLevel = true;
+				LF_FloatingIsland->OnRep_ServerStreamedInLevel();
+			}*/
+
 
 			static bool bHasStartedListening = false;
 			if (!bHasStartedListening)
