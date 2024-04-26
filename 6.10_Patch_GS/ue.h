@@ -14,6 +14,8 @@
 #include "AGameModeBase.h"
 #include "Inventory.h"
 #include "HSP.h"
+#include "PlayerController.h"
+#include "Customization.h"
 
 namespace Misc
 {
